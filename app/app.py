@@ -9,9 +9,9 @@ def create_app():
     init_routes(app)
 
     # Stampare tutte le route registrate
-    print("Registered Routes:")
-    for rule in app.url_map.iter_rules():
-        print(rule)
+    #print("Registered Routes:")
+    #for rule in app.url_map.iter_rules():
+    #    print(rule)
 
     return app
 
