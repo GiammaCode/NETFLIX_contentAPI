@@ -10,7 +10,7 @@ class Film:
     def to_dict(self):
         """Converti l'oggetto Film in un dizionario serializzabile in JSON."""
         return {
-            "id": self.id,
+            "filmId": self.filmId,
             "title": self.title,
             "actors": self.actors,
             "release_year": self.release_year,
@@ -22,7 +22,6 @@ class Film:
     def from_dict(data):
         """Crea un'istanza di Film da un dizionario."""
         return Film(
-            id=data.get("id"),
             title=data.get("title"),
             actors=data.get("actors"),
             release_year=data.get("release_year"),
