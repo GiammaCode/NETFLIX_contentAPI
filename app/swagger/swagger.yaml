@@ -1,0 +1,297 @@
+openapi: 3.0.0
+info:
+  title: Content Service API
+  description: API to manage film and actor entities.
+  version: 1.0.0
+servers:
+- url: http://localhost:8080/content_api
+  description: main local server
+paths:
+  /films:
+    get:
+      summary: Return a list of all available films.
+      operationId: films_get
+      responses:
+        "200":
+          description: list of films.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Film'
+                x-content-type: application/json
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+    post:
+      summary: Add a new film (work with singol film)
+      operationId: films_post
+      requestBody:
+        description: add film details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Film'
+        required: true
+      responses:
+        "201":
+          description: Film added with successfully
+        "400":
+          description: Error request (missing data)
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /films/{id}:
+    get:
+      summary: Return information about specific film.
+      operationId: films_id_get
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Details of specific film
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Film'
+        "404":
+          description: Film not found
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+    put:
+      summary: Update information about specific film
+      operationId: films_id_put
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        description: new details of film
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Film'
+        required: true
+      responses:
+        "200":
+          description: Film updated with successfully
+        "400":
+          description: error request
+        "404":
+          description: Film not found
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+    delete:
+      summary: Remove a specific film.
+      operationId: films_id_delete
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "204":
+          description: Film removed with successfully
+        "404":
+          description: Film not found
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /actors:
+    get:
+      summary: gets all actors
+      operationId: get_actors
+      responses:
+        "200":
+          description: List of actors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Actor'
+                x-content-type: application/json
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+    post:
+      summary: Add a new actor
+      operationId: create_actor
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Actor'
+        required: true
+      responses:
+        "201":
+          description: Actor created with successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Actor'
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /actors/{actorId}:
+    get:
+      summary: gets a specific actor
+      operationId: get_actor_by_id
+      parameters:
+      - name: actorId
+        in: path
+        description: Actor's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Actor details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Actor'
+        "404":
+          description: Actor not found
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+    put:
+      summary: Update all details about actor
+      operationId: update_actor
+      parameters:
+      - name: actorId
+        in: path
+        description: Actor's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Actor'
+        required: true
+      responses:
+        "200":
+          description: Actor updated with successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Actor'
+        "404":
+          description: Actor not found
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+    delete:
+      summary: Remove a specific Actor.
+      operationId: actors_actor_id_delete
+      parameters:
+      - name: actorId
+        in: path
+        description: Actor's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "204":
+          description: Actor removed with successfully
+        "404":
+          description: Actor not found
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /actors/{actorId}/films:
+    get:
+      summary: gets all film of specific actor
+      operationId: get_films_by_actor
+      parameters:
+      - name: actorId
+        in: path
+        description: Actor's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: List of films the actor has performed in
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Film'
+                x-content-type: application/json
+        "404":
+          description: Actor or films not found
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+components:
+  schemas:
+    Film:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Film's ID
+          example: 1
+        title:
+          type: string
+          description: Film's title
+          example: Il Padrino
+        Actors:
+          type: integer
+          description: return actorID in the films
+        release_year:
+          type: integer
+          description: year of release
+          example: 1972
+        genre:
+          type: string
+          description: type of film
+          example: Drammatico
+        rating:
+          type: number
+          description: film's rating (from 1 to 10)
+          example: 9.2
+      example:
+        release_year: 1972
+        genre: Drammatico
+        rating: 9.2
+        Actors: 0
+        id: 1
+        title: Il Padrino
+    Actor:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Actor's ID
+          example: 100
+        name:
+          type: string
+          description: Actor's first name
+          example: Al
+        surname:
+          type: string
+          description: Actor's surname
+          example: Pacino
+        dateOfBirth:
+          type: string
+          description: Actor's birthdate
+          format: date
+          example: 1940-04-25
+        films:
+          type: integer
+          description: List of filmIDs that the actor has performed in
+      example:
+        films: 0
+        surname: Pacino
+        name: Al
+        dateOfBirth: 1940-04-25T00:00:00.000+00:00
+        id: 100
+

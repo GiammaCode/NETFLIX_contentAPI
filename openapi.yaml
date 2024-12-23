@@ -1,0 +1,265 @@
+openapi: 3.0.0
+info:
+  title: Content Service API
+  version: 1.0.0
+  description: API to manage film and actor entities.
+servers:
+  - url: http://localhost:8080/content_api
+    description: main local server
+
+paths:
+  #FILM MICROSERVICE#
+  /films:
+    get:
+      summary: Return a list of all available films.
+      responses:
+        '200':
+          description: list of films.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Film'
+    post:
+      summary: Add a new film (work with singol film)
+      requestBody:
+        description: add film details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Film'
+      responses:
+        '201':
+          description: Film added with successfully
+        '400':
+          description: Error request (missing data)
+
+  /films/{id}:
+    get:
+      summary: Return information about specific film.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Details of specific film
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Film'
+        '404':
+          description: Film not found
+    put:
+      summary: Update information about specific film
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: new details of film
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Film'
+      responses:
+        '200':
+          description: Film updated with successfully
+        '400':
+          description: error request
+        '404':
+          description: Film not found
+
+    delete:
+      summary: Remove a specific film.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Film removed with successfully
+        '404':
+          description: Film not found
+
+  #ACTOR MICROSERVICE#
+  /actors:
+    get:
+      summary: gets all actors
+      operationId: getActors
+      responses:
+        '200':
+          description: List of actors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Actor'
+
+    post:
+      summary: Add a new actor
+      operationId: createActor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Actor'
+      responses:
+        '201':
+          description: Actor created with successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Actor'
+
+  /actors/{actorId}:
+    get:
+      summary: gets a specific actor
+      operationId: getActorById
+      parameters:
+        - name: actorId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Actor's ID
+      responses:
+        '200':
+          description: Actor details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Actor'
+        '404':
+          description: Actor not found
+
+    put:
+      summary: Update all details about actor
+      operationId: updateActor
+      parameters:
+        - name: actorId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Actor's ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Actor'
+      responses:
+        '200':
+          description: Actor updated with successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Actor'
+        '404':
+          description: Actor not found
+
+    delete:
+        summary: Remove a specific Actor.
+        parameters:
+          - name: actorId
+            in: path
+            required: true
+            schema:
+              type: integer
+            description: Actor's ID
+        responses:
+          '204':
+            description: Actor removed with successfully
+          '404':
+            description: Actor not found
+
+  /actors/{actorId}/films:
+      get:
+        summary: gets all film of specific actor
+        operationId: getFilmsByActor
+        parameters:
+          - name: actorId
+            in: path
+            required: true
+            schema:
+              type: integer
+            description: Actor's ID
+        responses:
+          '200':
+            description: List of films the actor has performed in
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Film'
+          '404':
+            description: Actor or films not found
+
+#COMPONENTS#
+components:
+  schemas:
+    Film:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Film's ID
+          example: 1
+        title:
+          type: string
+          description: Film's title
+          example: "Il Padrino"
+        Actors:
+          type: integer
+          description: return actorID in the films
+          example: "1, 15"
+        release_year:
+          type: integer
+          description: year of release
+          example: 1972
+        genre:
+          type: string
+          description: type of film
+          example: "Drammatico"
+        rating:
+          type: number
+          description: film's rating (from 1 to 10)
+          example: 9.2
+
+    Actor:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Actor's ID
+          example: 100
+        name:
+          type: string
+          description: Actor's first name
+          example: "Al"
+        surname:
+          type: string
+          description: Actor's surname
+          example: "Pacino"
+        dateOfBirth:
+          type: string
+          format: date
+          description: Actor's birthdate
+          example: "1940-04-25"
+        films:
+          type: integer
+          description: List of filmIDs that the actor has performed in
+          example: "1, 33"
