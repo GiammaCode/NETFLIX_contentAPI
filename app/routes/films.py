@@ -4,8 +4,6 @@ from utils.validation import validate_film
 
 films_bp = Blueprint("films", __name__)
 
-
-
 @films_bp.route("/", methods=["GET"])
 def get_films():
     films = list(mongo.db.films.find())
