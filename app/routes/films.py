@@ -25,19 +25,19 @@ def add_film():
     return jsonify({"message": "Film added successfully"}), 201
 
 
-@films_bp.route('/<int:content_id>', methods=["GET"])
+@films_bp.route('/<int:filmId>', methods=["GET"])
 def get_film(filmId):
-    film = mongo.db.actors.find_one({"filmId": filmId})
+    film = mongo.db.films.find_one({"filmId": filmId})
     if film:
         film["_id"] = str(film["_id"])
         return jsonify(film), 200
     return jsonify({"error": "film not found"}), 404
 
 
-@films_bp.route('/<int:content_id>', methods=["PUT"])
+@films_bp.route('/<int:filmId>', methods=["PUT"])
 def update_film(filmId):
     data = request.json
-    updated_film = mongo.db.actors.find_one_and_update(
+    updated_film = mongo.db.films.find_one_and_update(
         {"filmId": filmId},
         {"$set": data},
         return_document=True
@@ -48,9 +48,9 @@ def update_film(filmId):
     return jsonify({"error": "Film not found"}), 404
 
 
-@films_bp.route('/<int:content_id>', methods=["DELETE"])
+@films_bp.route('/<int:filmId>', methods=["DELETE"])
 def delete_film(filmId):
-    result = mongo.db.actors.delete_one({"filmId": filmId})
+    result = mongo.db.films.delete_one({"filmId": filmId})
     if result.deleted_count > 0:
         return "", 204
     return jsonify({"error": "filmId not found"}), 404
