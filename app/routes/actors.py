@@ -52,3 +52,12 @@ def delete_actor(actorId):
     if result.deleted_count > 0:
         return "", 204
     return jsonify({"error": "Actor not found"}), 404
+
+# GET all film IDs of a specific actor
+@actors_bp.route("/<int:actorId>/films", methods=["GET"])
+def get_films_by_actor(actorId):
+    actor = mongo.db.actors.find_one({"actorId": actorId})
+    if actor:
+        films = actor.get("films", "")  # Recupera la lista di film associati
+        return jsonify({"actorId": actorId, "films": films.split(", ")}), 200
+    return jsonify({"error": "Actor not found"}), 404
