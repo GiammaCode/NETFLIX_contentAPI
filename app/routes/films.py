@@ -54,11 +54,32 @@ def add_film():
             - 400: Error message if validation fails.
     """
     data = request.json
+
+    # Validate the film data
     valid, error = validate_film(data)
     if not valid:
         return jsonify(error), 400
+
+    # Insert the film into the database
     mongo.db.films.insert_one(data)
-    return jsonify({"message": "Film added successfully"}), 201
+
+    # Update each actor's films list
+    actor_ids = data.get("actors", [])
+    if isinstance(actor_ids, str):
+        actor_ids = [int(actor_id.strip()) for actor_id in actor_ids.split(",")]
+
+    for actor_id in actor_ids:
+        actor = mongo.db.actors.find_one({"actorId": actor_id})
+        if actor:
+            existing_films = actor.get("films", "").split(", ")
+            if str(data["filmId"]) not in existing_films:
+                updated_films = ", ".join(filter(None, [str(data["filmId"])] + existing_films))
+                mongo.db.actors.update_one(
+                    {"actorId": actor_id},
+                    {"$set": {"films": updated_films}}
+                )
+
+    return jsonify({"message": "Film added and actors updated successfully"}), 201
 
 @films_bp.route("/<int:filmId>", methods=["GET"])
 def get_film(filmId):

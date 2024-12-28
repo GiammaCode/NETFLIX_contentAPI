@@ -29,7 +29,7 @@ def create_app():
     app = Flask(__name__)
 
     # Application configuration
-    app.config["MONGO_URI"] = "mongodb://mongodb:27017/contentdb"
+    app.config["MONGO_URI"] = "mongodb://content_mongodb:27017/contentdb"
 
     # Initialize database and routes
     init_db(app)
