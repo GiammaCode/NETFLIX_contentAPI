@@ -8,8 +8,16 @@ services:
       - .:/app
     depends_on:
       - content_mongodb
+     networks:
+      - shared_network
   content_mongodb:
     image: mongo:latest
     container_name: content_mongodb
     ports:
       - "27017:27017"
+    networks:
+      - shared_network
+
+networks:
+  shared_network:
+    name: shared_network
