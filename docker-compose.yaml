@@ -8,8 +8,9 @@ services:
       - .:/app
     depends_on:
       - content_mongodb
-     networks:
+    networks: 
       - shared_network
+
   content_mongodb:
     image: mongo:latest
     container_name: content_mongodb
@@ -20,4 +21,4 @@ services:
 
 networks:
   shared_network:
-    name: shared_network
+    external: true
