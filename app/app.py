@@ -18,6 +18,7 @@ Components:
 from flask import Flask
 from services.db import init_db
 from routes import init_routes  # Import routes to avoid circular dependencies
+from flask_cors import CORS
 
 def create_app():
     """
@@ -30,6 +31,8 @@ def create_app():
 
     # Application configuration
     app.config["MONGO_URI"] = "mongodb://content_mongodb:27017/contentdb"
+
+    CORS(app)
 
     # Initialize database and routes
     init_db(app)
