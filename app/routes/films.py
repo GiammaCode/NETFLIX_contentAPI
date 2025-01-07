@@ -144,3 +144,40 @@ def delete_film(filmId):
     if result.deleted_count > 0:
         return "", 204
     return jsonify({"error": "Film ID not found"}), 404
+
+@films_bp.route("/<int:filmId>/actors", methods=["GET"])
+def get_actors_by_film(filmId):
+    """
+    Retrieve a list of actors associated with a specific film.
+
+    Args:
+        filmId (int): The unique ID of the film.
+
+    Returns:
+        Response:
+            - 200: List of associated actors if successful.
+            - 400: Error message if the actor ID format is invalid.
+            - 404: Error message if the film is not found.
+    """
+    # Trova il film corrispondente all'ID
+    film = mongo.db.films.find_one({"filmId": filmId})
+    if not film:
+        return jsonify({"error": "Film not found"}), 404
+
+    # Recupera gli ID degli attori dal film
+    actor_ids = film.get("actors", [])
+    if not actor_ids:
+        return jsonify({"actors": []}), 200
+
+    try:
+        # Converti gli ID degli attori in formato integer
+        actor_ids = [int(actor_id) for actor_id in actor_ids]
+    except ValueError:
+        return jsonify({"error": "Invalid actor ID format"}), 400
+
+    # Trova gli attori corrispondenti
+    actors = list(mongo.db.actors.find({"actorId": {"$in": actor_ids}}))
+    for actor in actors:
+        actor["_id"] = str(actor["_id"])  # Converti ObjectId in stringa per la serializzazione
+
+    return jsonify({"filmId": filmId, "actors": actors}), 200

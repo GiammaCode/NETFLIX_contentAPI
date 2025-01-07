@@ -11,7 +11,7 @@ class Film:
         rating (float): Rating of the film (e.g., IMDb or other rating systems).
     """
 
-    def __init__(self, filmId, title, actors, release_year, genre, rating):
+    def __init__(self, filmId, title, actors, release_year, genre, rating, description, image_path):
         """
         Initializes a Film object.
 
@@ -22,6 +22,8 @@ class Film:
             release_year (int): The year the film was released.
             genre (str): The genre of the film.
             rating (float): The film's rating (e.g., IMDb rating).
+            description (str): The film's description.
+            image_path (str): The main image of the film.
         """
         self.filmId = filmId  # Unique ID of the film
         self.title = title  # Title of the film
@@ -29,6 +31,8 @@ class Film:
         self.release_year = release_year  # Year of release
         self.genre = genre  # Genre of the film
         self.rating = rating  # Film's rating
+        self.description = description
+        self.image_path = image_path
 
     def to_dict(self):
         """
@@ -44,6 +48,8 @@ class Film:
             "release_year": self.release_year,
             "genre": self.genre,
             "rating": self.rating,
+            "description": self.description,
+            "image_path": self.image_path
         }
 
     @staticmethod
@@ -59,6 +65,8 @@ class Film:
                 - "release_year" (int): Year the film was released.
                 - "genre" (str): Genre of the film.
                 - "rating" (float): Rating of the film.
+                - description (str): The film's description.
+                - image_path (str): The main image of the film.
 
         Returns:
             Film: An instance of the Film class initialized with the provided data.
@@ -70,4 +78,6 @@ class Film:
             release_year=data.get("release_year"),
             genre=data.get("genre"),
             rating=data.get("rating"),
+            description=data.get("description"),
+            image_path=data.get("image_path")
         )

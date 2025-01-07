@@ -46,12 +46,14 @@ routes and validations.
 #### Create a Content
 ```
 {
-  "filmId": 2,
-  "title": "il peprpe",
+ "filmId": 5,
+  "title": "La banda",
   "actors": "1",
-  "release_year": 1992,
-  "genre": "Drammatico",
-  "rating": 10
+  "release_year": 2020,
+  "genre": "Action",
+  "rating": 10,
+  "description": "The film tells the story of an alienated... ",
+  "image_path": "../../public/default_film_image.png"
 }
 ```
 #### Add a Actor
