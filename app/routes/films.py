@@ -166,14 +166,19 @@ def get_actors_by_film(filmId):
 
     # Recupera gli ID degli attori dal film
     actor_ids = film.get("actors", [])
-    if not actor_ids:
-        return jsonify({"actors": []}), 200
+
+    # Se gli ID sono stringhe, separali e rimuovi gli spazi
+    if isinstance(actor_ids, str):
+        actor_ids = [id_.strip() for id_ in actor_ids.split(",")]
 
     try:
-        # Converti gli ID degli attori in formato integer
-        actor_ids = [int(actor_id) for actor_id in actor_ids]
+        # Converti gli ID in formato integer
+        actor_ids = [int(actor_id) for actor_id in actor_ids if actor_id.isdigit()]
     except ValueError:
         return jsonify({"error": "Invalid actor ID format"}), 400
+
+    if not actor_ids:
+        return jsonify({"actors": []}), 200
 
     # Trova gli attori corrispondenti
     actors = list(mongo.db.actors.find({"actorId": {"$in": actor_ids}}))
