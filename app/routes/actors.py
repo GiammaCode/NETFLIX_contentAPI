@@ -55,9 +55,27 @@ def add_actor():
             - 400: Error message if validation fails.
     """
     data = request.json
+
+    # Controlla se il payload è un array
+    if isinstance(data, list):
+        errors = []
+        for actor in data:
+            valid, error = validate_actor(actor)
+            if not valid:
+                errors.append(error)
+                continue
+            mongo.db.actors.insert_one(actor)
+
+        if errors:
+            return jsonify({"message": "Some actors were not added", "errors": errors}), 400
+
+        return jsonify({"message": "Actors added successfully"}), 201
+
+    # Gestione di un singolo oggetto
     valid, error = validate_actor(data)
     if not valid:
         return jsonify(error), 400
+
     mongo.db.actors.insert_one(data)
     return jsonify({"message": "Actor added successfully"}), 201
 

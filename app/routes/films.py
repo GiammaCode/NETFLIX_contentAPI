@@ -41,21 +41,45 @@ def get_films():
     return jsonify(films), 200
 
 @films_bp.route("/", methods=["POST"])
-def add_film():
+def add_films():
     """
-    Add a new film to the database.
+    Add new film(s) to the database.
 
     Request Body:
-        JSON: Film details (validated using `validate_film`).
+        JSON: A single film or a list of films (validated using `validate_film`).
 
     Returns:
         Response:
-            - 201: Success message if the film is added.
+            - 201: Success message if the film(s) are added.
             - 400: Error message if validation fails.
     """
     data = request.json
 
-    # Validate the film data
+    # Check if the input is a list or a single object
+    if isinstance(data, list):
+        errors = []
+
+        for film in data:
+            valid, error = validate_film(film)
+            if not valid:
+                errors.append({"film": film, "error": error})
+                continue
+
+            # Insert the film into the database
+            mongo.db.films.insert_one(film)
+
+            # Update each actor's films list
+            update_actors_with_film(film)
+
+        if errors:
+            return jsonify({
+                "message": "Some films were not added",
+                "errors": errors
+            }), 400
+
+        return jsonify({"message": "Films added and actors updated successfully"}), 201
+
+    # Handle a single film
     valid, error = validate_film(data)
     if not valid:
         return jsonify(error), 400
@@ -64,7 +88,20 @@ def add_film():
     mongo.db.films.insert_one(data)
 
     # Update each actor's films list
-    actor_ids = data.get("actors", [])
+    update_actors_with_film(data)
+
+    return jsonify({"message": "Film added and actors updated successfully"}), 201
+
+def update_actors_with_film(film):
+    """
+    Update the films list for each actor involved in the film.
+
+    Args:
+        film (dict): The film data, including the "actors" field.
+    """
+    actor_ids = film.get("actors", [])
+
+    # Handle actors provided as a comma-separated string
     if isinstance(actor_ids, str):
         actor_ids = [int(actor_id.strip()) for actor_id in actor_ids.split(",")]
 
@@ -72,14 +109,12 @@ def add_film():
         actor = mongo.db.actors.find_one({"actorId": actor_id})
         if actor:
             existing_films = actor.get("films", "").split(", ")
-            if str(data["filmId"]) not in existing_films:
-                updated_films = ", ".join(filter(None, [str(data["filmId"])] + existing_films))
+            if str(film["filmId"]) not in existing_films:
+                updated_films = ", ".join(filter(None, [str(film["filmId"])] + existing_films))
                 mongo.db.actors.update_one(
                     {"actorId": actor_id},
                     {"$set": {"films": updated_films}}
                 )
-
-    return jsonify({"message": "Film added and actors updated successfully"}), 201
 
 @films_bp.route("/<int:filmId>", methods=["GET"])
 def get_film(filmId):

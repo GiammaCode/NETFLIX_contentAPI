@@ -53,7 +53,7 @@ routes and validations.
   "genre": "Action",
   "rating": 10,
   "description": "The film tells the story of an alienated... ",
-  "image_path": "../../public/default_film_image.png"
+  "image_path": "/default_film_image.png"
 }
 ```
 #### Add a Actor
