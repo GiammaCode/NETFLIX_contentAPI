@@ -3,6 +3,8 @@ API Blueprint for Actor Management
 
 This module defines API routes for managing actor-related operations, including
 retrieving, adding, updating, deleting actors, and fetching associated films.
+Y-MM-DD' format.
+            films (str): A comma-separated string of film IDs.
 
 Blueprint:
     - `actors_bp`: A Flask Blueprint for actor-related routes.
