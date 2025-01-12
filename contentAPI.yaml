@@ -348,6 +348,7 @@ components:
               items:
                 type: integer
             - type: string
+          description: "list of actorId from actor component."
         release_year:
           type: integer
         genre:
@@ -383,6 +384,7 @@ components:
           format: date
         films:
           type: string
+          description: "list of filmID from the film component."
       example:
         actorId: 1
         name: "Leonardo"
