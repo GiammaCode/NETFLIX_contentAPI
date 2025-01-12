@@ -142,7 +142,7 @@ paths:
 
   /films/{filmId}/actors:
     get:
-      summary: Retrieve actors for a specific film
+      summary: Retrieve details actors for a specific film
       parameters:
         - name: filmId
           in: path
@@ -294,7 +294,7 @@ paths:
 
   /actors/{actorId}/films:
     get:
-      summary: Retrieve films associated with an actor
+      summary: Retrieve details films associated with an actor
       parameters:
         - name: actorId
           in: path
